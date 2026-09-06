@@ -1,0 +1,82 @@
+[
+    {
+        "games": 10000,
+        "states": 2143,
+        "wins": 813,
+        "draws": 79,
+        "losses": 108,
+        "win_rate": 0.813,
+        "run_id": 1,
+        "timestamp": "2026-09-06T15:39:07.291352"
+    },
+    {
+        "training_games": 10000,
+        "evaluation_games": 1000,
+        "final_states": 2226,
+        "final_epsilon": 0.05,
+        "wins": 780,
+        "draws": 42,
+        "losses": 178,
+        "win_rate": 0.78,
+        "draw_rate": 0.042,
+        "loss_rate": 0.178,
+        "run_id": 2,
+        "timestamp": "2026-09-06T15:55:54.889151"
+    },
+    {
+        "training_games": 100,
+        "evaluation_games": 100,
+        "final_states": 483,
+        "final_epsilon": 0.6057704364907278,
+        "wins": 55,
+        "draws": 13,
+        "losses": 32,
+        "win_rate": 0.55,
+        "draw_rate": 0.13,
+        "loss_rate": 0.32,
+        "run_id": 3,
+        "timestamp": "2026-09-06T16:15:24.432730"
+    },
+    {
+        "training_games": 1000,
+        "evaluation_games": 100,
+        "final_states": 1595,
+        "final_epsilon": 0.05,
+        "wins": 64,
+        "draws": 6,
+        "losses": 30,
+        "win_rate": 0.64,
+        "draw_rate": 0.06,
+        "loss_rate": 0.3,
+        "run_id": 4,
+        "timestamp": "2026-09-06T16:16:00.825661"
+    },
+    {
+        "training_games": 10000,
+        "evaluation_games": 1000,
+        "final_states": 1996,
+        "final_epsilon": 0.05,
+        "wins": 769,
+        "draws": 68,
+        "losses": 163,
+        "win_rate": 0.769,
+        "draw_rate": 0.068,
+        "loss_rate": 0.163,
+        "run_id": 5,
+        "timestamp": "2026-09-06T16:19:29.579452"
+    },
+    {
+        "training_games": 10000,
+        "evaluation_games": 1000,
+        "final_states": 2217,
+        "final_epsilon": 0.05,
+        "wins": 712,
+        "draws": 52,
+        "losses": 236,
+        "win_rate": 0.712,
+        "draw_rate": 0.052,
+        "loss_rate": 0.236,
+        "run_id": 6,
+        "timestamp": "2026-09-06T16:24:26.702112"
+    }
+]
