@@ -158,7 +158,10 @@ def render_sidebar() -> None:
         st.markdown('<div class="lab-kicker">EXPERIMENT CONTROL</div>', unsafe_allow_html=True)
         st.header("Control Center")
         training_games = st.selectbox(
-            "Training Games", [100, 1_000, 10_000, 100_000], index=2, format_func=lambda x: f"{x:,}"
+            "Training Games",
+            [100, 1_000, 10_000, 100_000, 250_000, 500_000, 1_000_000],
+            index=2,
+            format_func=lambda x: f"{x:,}",
         )
         evaluation_games = st.selectbox(
             "Evaluation Games", [100, 500, 1_000], index=2, format_func=lambda x: f"{x:,}"
