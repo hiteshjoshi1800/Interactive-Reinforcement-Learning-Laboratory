@@ -1,4 +1,4 @@
-# 🧠 Q-Learn Lab
+# Interactive Reinforcement Learning Laboratory 2.0
 
 ### Interactive Reinforcement Learning Tic-Tac-Toe Laboratory
 
