@@ -123,54 +123,6 @@ Play as X against the current trained agent. The board uses the hybrid policy de
 └── README.md
 ```
 
-## Run locally
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/hiteshjoshi1800/Interactive-Reinforcement-Learning-Laboratory.git
-cd Interactive-Reinforcement-Learning-Laboratory
-```
-
-### 2. Create and activate a virtual environment
-
-Windows PowerShell:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-macOS/Linux:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Start the dashboard
-
-```bash
-streamlit run app.py
-```
-
-Open the local URL shown by Streamlit, usually:
-
-```text
-http://localhost:8501
-```
-
-## Run tests
-
-```bash
-python -m pytest -q tests
-```
 
 ## Training recommendations
 
@@ -181,7 +133,6 @@ Suggested starting points:
 | `10,000` | Fast experiment and dashboard demonstration |
 | `100,000` | More stable learning |
 | `250,000+` | Longer experiments and comparison |
-| `1,000,000` | Extended training; can take considerably longer |
 
 More games are not the only way to improve performance. Opponent quality, reward design, exploration settings, symmetry handling, and evaluation methodology also affect results.
 
@@ -205,6 +156,4 @@ Streamlit will install the pinned dependencies from `requirements.txt`.
 - Experiment summaries are persisted locally in `data/experiment_history.json`.
 - Streamlit Cloud may have execution-time limits for very large training runs.
 
-## License
 
-No license has been specified yet.
