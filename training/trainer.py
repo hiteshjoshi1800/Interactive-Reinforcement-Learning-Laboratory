@@ -1,38 +1,67 @@
 from environment.tictactoe import TicTacToe
 from agents.q_learning import QLearningAgent
+from agents.minimax import MinimaxAgent
+from agents.random_agent import RandomAgent
+from agents.rule_based import RuleBasedAgent
 from training.metrics import TrainingMetrics
 
 
-def train_game(agent):
+def choose_opponent(agent, game_number):
+    opponent_type = game_number % 10
+    if opponent_type < 3:
+        return RandomAgent()
+    if opponent_type < 6:
+        return RuleBasedAgent()
+    if opponent_type < 8:
+        return MinimaxAgent()
+    return agent
+
+
+def train_game(agent, game_number=0):
 
     game = TicTacToe()
+    opponent = choose_opponent(agent, game_number)
 
     final_reward = 0
 
     while not game.is_terminal():
+        if game.current_player == 1:
+            state = game.get_state()
+            action = agent.choose_action(state, game.get_legal_actions())
+            next_state, reward, done = game.step(action)
 
-        state = game.get_state()
-        legal_actions = game.get_legal_actions()
+            if done:
+                agent.update(
+                    state, action, reward, next_state, [], True
+                )
+                final_reward = reward
+                continue
 
-        action = agent.choose_action(
-            state,
-            legal_actions
-        )
-
-        next_state, reward, done = game.step(action)
-
-        next_legal_actions = game.get_legal_actions()
-
-        agent.update(
-            state,
-            action,
-            reward,
-            next_state,
-            next_legal_actions,
-            done
-        )
-
-        final_reward = reward
+            opponent_action = (
+                opponent.choose_action(
+                    game.get_state(), game.get_legal_actions()
+                )
+                if opponent is not agent
+                else opponent.choose_action(
+                    game.get_state(), game.get_legal_actions()
+                )
+            )
+            next_state, opponent_reward, done = game.step(opponent_action)
+            agent.update(
+                state,
+                action,
+                -1 if done and opponent_reward == -1 else 0,
+                next_state,
+                game.get_legal_actions(),
+                done,
+            )
+            final_reward = -1 if done and opponent_reward == -1 else 0
+        else:
+            opponent_action = opponent.choose_action(
+                game.get_state(), game.get_legal_actions()
+            )
+            _, reward, done = game.step(opponent_action)
+            final_reward = reward
 
     agent.decay_epsilon()
 
@@ -45,7 +74,7 @@ def train(agent, number_of_games):
 
     for game_number in range(number_of_games):
 
-        reward = train_game(agent)
+        reward = train_game(agent, game_number)
 
         metrics.record(
             game_number=game_number + 1,

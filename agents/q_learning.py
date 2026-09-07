@@ -77,6 +77,31 @@ class QLearningAgent:
         next_legal_actions,
         done
     ):
+        for transformed_state, action_map in self._symmetries(state):
+            transformed_next_state = self._transform_state(next_state, action_map)
+            transformed_action = action_map.index(action)
+            transformed_next_actions = [
+                action_map.index(next_action)
+                for next_action in next_legal_actions
+            ]
+            self._update_once(
+                transformed_state,
+                transformed_action,
+                reward,
+                transformed_next_state,
+                transformed_next_actions,
+                done,
+            )
+
+    def _update_once(
+        self,
+        state,
+        action,
+        reward,
+        next_state,
+        next_legal_actions,
+        done,
+    ):
 
         q_values = self.get_q_values(state, [action])
 
@@ -106,6 +131,29 @@ class QLearningAgent:
         )
 
         self.q_table[state][action] = new_q
+
+    def _symmetries(self, state):
+        if len(state) != 9:
+            return [(state, tuple(range(len(state))))]
+
+        mappings = (
+            (0, 1, 2, 3, 4, 5, 6, 7, 8),
+            (6, 3, 0, 7, 4, 1, 8, 5, 2),
+            (8, 7, 6, 5, 4, 3, 2, 1, 0),
+            (2, 5, 8, 1, 4, 7, 0, 3, 6),
+            (2, 1, 0, 5, 4, 3, 8, 7, 6),
+            (6, 7, 8, 3, 4, 5, 0, 1, 2),
+            (0, 3, 6, 1, 4, 7, 2, 5, 8),
+            (8, 5, 2, 7, 4, 1, 6, 3, 0),
+        )
+        return [
+            (self._transform_state(state, mapping), mapping)
+            for mapping in mappings
+        ]
+
+    @staticmethod
+    def _transform_state(state, mapping):
+        return tuple(state[index] for index in mapping)
 
     def decay_epsilon(self):
 

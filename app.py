@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from agents.q_learning import QLearningAgent
+from agents.minimax import MinimaxAgent
 from environment.tictactoe import TicTacToe
 from evaluation.evaluator import evaluate
 from persistence.model_manager import ModelManager
@@ -64,6 +65,8 @@ def initialize_state() -> None:
         st.session_state.run_number = None
     if "reset_message" not in st.session_state:
         st.session_state.reset_message = None
+    if "tactical_agent" not in st.session_state:
+        st.session_state.tactical_agent = MinimaxAgent()
 
 
 def model_manager() -> ModelManager:
@@ -379,8 +382,9 @@ def play_human_move(action: int) -> None:
         return
     game.step(action)
     if not game.is_terminal():
-        agent_action = st.session_state.current_agent.choose_greedy_action(
-            game.get_state(), game.get_legal_actions()
+        agent_action = st.session_state.tactical_agent.choose_action(
+            game.get_state(),
+            game.get_legal_actions(),
         )
         game.step(agent_action)
 
@@ -444,7 +448,8 @@ def render_play() -> None:
             f'<span class="muted">Training games</span><br>{len(st.session_state.current_metrics.games):,}<br><br>'
             f'<span class="muted">Learned states</span><br>{len(st.session_state.current_agent.q_table):,}<br><br>'
             '<span class="muted">Exploration</span><br>OFF<br><br>'
-            '<span class="muted">Policy</span><br>GREEDY</div>',
+            '<span class="muted">Policy</span><br>HYBRID<br>'
+            '<span class="muted">Q-learning + Minimax tactical safety</span></div>',
             unsafe_allow_html=True,
         )
 
