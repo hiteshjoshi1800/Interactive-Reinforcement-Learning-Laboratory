@@ -108,7 +108,6 @@ def render_header() -> None:
     status, detail = status_label()
     left, right = st.columns([4, 1])
     with left:
-        st.markdown('<div class="lab-kicker">Q-LEARN LAB</div>', unsafe_allow_html=True)
         st.title("Interactive Reinforcement Learning Laboratory")
         st.markdown(
             '<div class="lab-subtitle">Watch an agent learn Tic-Tac-Toe from scratch through self-play.</div>',
