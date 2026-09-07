@@ -6,7 +6,7 @@ class QLearningAgent:
     def __init__(
         self,
         learning_rate=0.1,
-        discount_factor=0.9,
+        discount_factor=0.95,
         epsilon=1.0,
         epsilon_min=0.05,
         epsilon_decay=0.995
