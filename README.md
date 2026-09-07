@@ -1,330 +1,151 @@
 # Interactive Reinforcement Learning Laboratory 2.0
 
-### Interactive Reinforcement Learning Tic-Tac-Toe Laboratory
+An interactive Streamlit laboratory for training, evaluating, visualizing, and playing against a reinforcement-learning Tic-Tac-Toe agent.
 
-> **Can an agent learn to play Tic-Tac-Toe without being taught a strategy?**
+The project is designed to make the learning process visible—not just the final game. You can inspect reward progression, exploration decay, learned states, experiment history, evaluation results, and the agent's gameplay policy from one dashboard.
 
-**Q-Learn Lab** is an interactive Reinforcement Learning laboratory that demonstrates how a tabular Q-learning agent can learn Tic-Tac-Toe strategy entirely through **self-play**.
+## Features
 
-The agent starts with an **empty Q-table and no learned strategy**. It repeatedly plays games, receives rewards, updates its Q-values, and gradually develops a strategy through experience.
+- Tabular Q-learning with epsilon-greedy exploration
+- Discount factor configured for long-term strategy
+- Board-symmetry updates for rotations and reflections
+- Mixed training opponents:
+  - Random opponent
+  - Tactical rule-based opponent
+  - Minimax opponent
+  - Self-play
+- Interactive training controls up to 1,000,000 games
+- Training visualizations:
+  - Reward progression
+  - Rolling reward average
+  - Epsilon decay
+  - Learned-state growth
+- Evaluation against a random opponent
+- Persistent experiment history in `data/experiment_history.json`
+- Human-versus-agent Tic-Tac-Toe board
+- Hybrid gameplay policy with Minimax tactical safety
+- Automated tests for the environment, agent, and training pipeline
 
-This project is designed not just to play Tic-Tac-Toe, but to **visualize and experiment with the learning process itself.**
+## How the agent learns
 
----
-
-## 🎯 What This Project Demonstrates
-
-The project demonstrates a complete Reinforcement Learning workflow:
+The agent estimates the value of taking an action in a board state:
 
 ```text
-              Empty Q-Table
-                    │
-                    ▼
-             Random Exploration
-                    │
-                    ▼
-               Self-Play
-                    │
-                    ▼
-             Reward Signals
-                    │
-                    ▼
-             Q-Value Updates
-                    │
-                    ▼
-          Learned State-Action Values
-                    │
-                    ▼
-             Greedy Evaluation
-                    │
-                    ▼
-           Human vs AI Gameplay
+State
+  ↓
+Choose action
+  ↓
+Play move
+  ↓
+Receive reward
+  ↓
+Update Q-value
+  ↓
+Observe next state
 ```
 
-The agent is **not given a Tic-Tac-Toe strategy**.
-
-It only knows:
-
-* The rules of the game
-* Which moves are legal
-* The reward received after actions
-* Its current Q-values
-
-Everything else is learned through experience.
-
----
-
-## ✨ Features
-
-### 🧠 Reinforcement Learning
-
-* Tabular Q-learning
-* Self-play training
-* ε-greedy exploration
-* Q-value updates
-* Configurable learning parameters
-* Fresh agent for every experiment
-
-### 📈 Training Laboratory
-
-Visualize:
-
-* Training progress
-* Reward over games
-* Epsilon decay
-* Number of learned states
-* Training statistics
-
-### 📊 Agent Evaluation
-
-Evaluate the trained agent against a Random Agent and measure:
-
-* Wins
-* Draws
-* Losses
-* Win rate
-* Draw rate
-* Loss rate
-
-Evaluation uses a **greedy policy** and does not modify the Q-table.
-
-### 🔬 Experiment Tracking
-
-Every training experiment is recorded so different runs can be compared.
-
-Track:
-
-* Training games
-* Evaluation games
-* Learned states
-* Final epsilon
-* Win rate
-* Draw rate
-* Loss rate
-* Experiment timestamp
-
-### 🎮 Human vs AI
-
-Play Tic-Tac-Toe against the currently trained agent.
-
-The agent uses its learned Q-table and a greedy policy during gameplay.
-
-Human gameplay does **not** update or retrain the model.
-
----
-
-## 🏗️ Architecture
+The Q-learning update uses:
 
 ```text
-reinforcement-learning-tictactoe/
-│
-├── app.py
-│
-├── environment/
-│   ├── __init__.py
-│   └── tictactoe.py
-│
+Q(s, a) ← Q(s, a) + α [r + γ max Q(s', a') − Q(s, a)]
+```
+
+Current default model parameters:
+
+| Parameter | Value |
+| --- | ---: |
+| Learning rate | `0.10` |
+| Discount factor | `0.95` |
+| Initial epsilon | `1.00` |
+| Minimum epsilon | `0.05` |
+| Epsilon decay | `0.995` |
+
+The trainer exposes the agent to different opponent styles so it does not learn only against random play. During human gameplay, the learned policy is combined with Minimax tactical protection so the agent can take immediate wins, block immediate losses, and avoid basic tactical mistakes.
+
+## Dashboard tabs
+
+### Training Lab
+
+Start a fresh experiment and inspect:
+
+- Training games
+- Learned Q-table states
+- Current epsilon
+- Evaluation win rate
+- Reward versus games
+- Epsilon decay
+- Learned-state growth
+
+### Performance
+
+View wins, draws, losses, outcome rates, and a summary of the latest evaluation against the random opponent. Evaluation uses a greedy policy and does not modify the Q-table.
+
+### Experiments
+
+Compare saved runs using:
+
+- Training games
+- Learned states
+- Wins, draws, and losses
+- Win, draw, and loss rates
+- Final epsilon
+- Timestamp
+
+### Play
+
+Play as X against the current trained agent. The board uses the hybrid policy described above. Human gameplay does not retrain the model.
+
+## Project structure
+
+```text
+.
+├── app.py                         # Streamlit dashboard
 ├── agents/
-│   ├── __init__.py
-│   ├── q_learning.py
-│   └── random_agent.py
-│
+│   ├── q_learning.py              # Tabular Q-learning agent
+│   ├── random_agent.py            # Random baseline
+│   ├── rule_based.py              # Tactical baseline
+│   └── minimax.py                 # Perfect tactical opponent
+├── environment/
+│   └── tictactoe.py               # Game rules and state transitions
 ├── training/
-│   ├── __init__.py
-│   ├── trainer.py
-│   └── metrics.py
-│
+│   ├── trainer.py                 # Mixed-opponent training loop
+│   └── metrics.py                 # Training history container
 ├── evaluation/
-│   ├── __init__.py
-│   └── evaluator.py
-│
+│   └── evaluator.py               # Greedy evaluation
 ├── persistence/
-│   ├── __init__.py
-│   └── model_manager.py
-│
+│   └── model_manager.py           # Experiment history storage
 ├── experiments/
-│   └── run_experiments.py
-│
+│   └── run_experiments.py         # Scripted experiment runner
 ├── data/
-│   └── experiment_history.json
-│
-├── models/
-│
-├── tests/
-│
+│   └── experiment_history.json    # Saved experiment summaries
+├── tests/                         # Automated tests
 ├── requirements.txt
-├── README.md
-└── .gitignore
+└── README.md
 ```
 
-### Component responsibilities
-
-| Component      | Responsibility                 |
-| -------------- | ------------------------------ |
-| `environment/` | Tic-Tac-Toe game environment   |
-| `agents/`      | RL and baseline agents         |
-| `training/`    | Self-play training and metrics |
-| `evaluation/`  | Measuring agent performance    |
-| `persistence/` | Experiment history             |
-| `experiments/` | Complete experiment pipeline   |
-| `app.py`       | Streamlit interface            |
-
-The architecture intentionally separates the **RL logic from the user interface**.
-
----
-
-## 🔄 Experiment Pipeline
-
-Each experiment starts from scratch:
-
-```text
-Create Fresh Agent
-       ↓
-Empty Q-Table
-       ↓
-Self-Play Training
-       ↓
-Record Training Metrics
-       ↓
-Evaluate Against Random Agent
-       ↓
-Save Experiment Results
-       ↓
-Display Results
-```
-
-The Q-table itself is **not permanently persisted**.
-
-Experiment history is stored separately so previous experiments can still be compared.
-
----
-
-## 📊 Example Experiment
-
-One training run produced:
-
-| Metric           |    Result |
-| ---------------- | --------: |
-| Training games   |    10,000 |
-| Evaluation games |     1,000 |
-| Learned states   |     2,226 |
-| Final epsilon    |      0.05 |
-| Wins             |       780 |
-| Draws            |        42 |
-| Losses           |       178 |
-| Win rate         | **78.0%** |
-| Draw rate        |      4.2% |
-| Loss rate        |     17.8% |
-
-These results are **one stochastic experiment**, not a claim that the agent will always achieve the same performance.
-
-Different runs can produce different results because the learning process involves randomness.
-
----
-
-## 🧪 Why Multiple Experiments?
-
-One of the main purposes of this project is experimentation.
-
-For example:
-
-```text
-100 games
-    ↓
-1,000 games
-    ↓
-10,000 games
-    ↓
-100,000 games
-```
-
-We can investigate questions such as:
-
-* Does more training improve performance?
-* How quickly does the Q-table grow?
-* When does the number of discovered states begin to plateau?
-* How does exploration affect learning?
-* How consistent are results across independent runs?
-* What happens when learning parameters change?
-
-Instead of presenting a single accuracy number, the project makes the **learning process observable**.
-
----
-
-## ⚙️ Q-Learning
-
-The agent uses the standard Q-learning update:
-
-```text
-Q(s,a) ← Q(s,a) + α [r + γ max Q(s',a') − Q(s,a)]
-```
-
-Where:
-
-* `s` = current state
-* `a` = selected action
-* `r` = reward
-* `s'` = next state
-* `α` = learning rate
-* `γ` = discount factor
-
-Action selection uses an ε-greedy strategy.
-
-Early in training:
-
-```text
-High ε
-   ↓
-More exploration
-   ↓
-More random actions
-```
-
-Later in training:
-
-```text
-Low ε
-   ↓
-More exploitation
-   ↓
-More use of learned Q-values
-```
-
----
-
-## 🖥️ Tech Stack
-
-* **Python**
-* **Streamlit**
-* **NumPy**
-* **Pandas**
-* **Plotly**
-* **JSON**
-* **Git / GitHub**
-
-The core RL algorithm is implemented from scratch rather than relying on an RL library.
-
----
-
-## 🚀 Running Locally
+## Run locally
 
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
-cd reinforcement-learning-tictactoe
+git clone https://github.com/hiteshjoshi1800/Interactive-Reinforcement-Learning-Laboratory.git
+cd Interactive-Reinforcement-Learning-Laboratory
 ```
 
-### 2. Create a virtual environment
+### 2. Create and activate a virtual environment
 
-```bash
-python -m venv venv
+Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-Activate it on Windows:
+macOS/Linux:
 
 ```bash
-venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate
 ```
 
 ### 3. Install dependencies
@@ -333,115 +154,57 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Run the Streamlit application
+### 4. Start the dashboard
 
 ```bash
 streamlit run app.py
 ```
 
-The application will open in your browser.
-
----
-
-## 🧪 Running an Experiment Without the UI
-
-You can also run the complete experiment pipeline directly:
-
-```bash
-python -m experiments.run_experiments
-```
-
-This will:
-
-1. Create a fresh Q-learning agent
-2. Train it through self-play
-3. Evaluate it against the Random Agent
-4. Save the experiment results
-5. Print the results to the terminal
-
----
-
-## 📌 Important Design Decisions
-
-### The agent starts from zero
-
-Every new experiment creates a new `QLearningAgent`.
-
-Previous training is not carried into the next experiment.
-
-### Human gameplay does not train the model
-
-The Human vs AI mode uses the trained policy but does not update the Q-table.
-
-This keeps gameplay separate from controlled experiments.
-
-### Evaluation is separate from training
-
-The evaluation phase uses a greedy policy and does not perform Q-learning updates.
-
-### Experiment history is persistent
-
-Results from previous experiments remain available even when the current agent is reset.
-
-### The project measures real outcomes
-
-There is no artificial metric such as:
-
-> "Agent intelligence: 87%"
-
-Performance is represented using measurable outcomes such as win rate, draw rate, loss rate, learned states, and training progression.
-
----
-
-## 🗺️ Future Improvements
-
-Potential extensions include:
-
-* More RL algorithms
-* Hyperparameter experimentation
-* Multiple opponent strategies
-* State-space analysis
-* Policy visualization
-* Reward analysis
-* Larger board configurations
-* Neural-network-based agents
-* Deep Q-learning
-* More advanced self-play environments
-
-The long-term goal is to turn the project into a broader **Reinforcement Learning experimentation platform**.
-
----
-
-## 📚 Learning Objective
-
-This project was built to understand Reinforcement Learning beyond simply implementing an algorithm.
-
-The laboratory focuses on the complete cycle:
+Open the local URL shown by Streamlit, usually:
 
 ```text
-Environment
-     ↓
-Agent
-     ↓
-Interaction
-     ↓
-Experience
-     ↓
-Learning
-     ↓
-Evaluation
-     ↓
-Experimentation
-     ↓
-Visualization
+http://localhost:8501
 ```
 
-The goal is to make the usually invisible learning process **observable, measurable, and interactive**.
+## Run tests
 
----
+```bash
+python -m pytest -q tests
+```
 
-## 👨‍💻 Project
+## Training recommendations
 
-**Q-Learn Lab — Reinforcement Learning Tic-Tac-Toe Laboratory**
+Suggested starting points:
 
-Built with Python and Streamlit.
+| Training games | Use |
+| ---: | --- |
+| `10,000` | Fast experiment and dashboard demonstration |
+| `100,000` | More stable learning |
+| `250,000+` | Longer experiments and comparison |
+| `1,000,000` | Extended training; can take considerably longer |
+
+More games are not the only way to improve performance. Opponent quality, reward design, exploration settings, symmetry handling, and evaluation methodology also affect results.
+
+## Streamlit Community Cloud
+
+1. Open [Streamlit Community Cloud](https://share.streamlit.io/).
+2. Sign in with GitHub.
+3. Create a new app.
+4. Select this repository.
+5. Choose branch `master`.
+6. Set the main file to `app.py`.
+7. Deploy.
+
+Streamlit will install the pinned dependencies from `requirements.txt`.
+
+## Limitations
+
+- The Q-table is tabular and specific to Tic-Tac-Toe.
+- Training contains randomness, so runs can produce different results.
+- A high win rate against a random opponent does not prove expert-level human performance.
+- Experiment summaries are persisted locally in `data/experiment_history.json`.
+- Streamlit Cloud may have execution-time limits for very large training runs.
+
+## License
+
+No license has been specified yet.
