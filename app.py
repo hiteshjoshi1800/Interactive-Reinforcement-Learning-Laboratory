@@ -159,7 +159,7 @@ def render_sidebar() -> None:
         st.header("Control Center")
         training_games = st.selectbox(
             "Training Games",
-            [100, 1_000, 10_000, 100_000, 250_000, 500_000, 1_000_000],
+            [100, 1_000, 10_000, 100_000],
             index=2,
             format_func=lambda x: f"{x:,}",
         )
