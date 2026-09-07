@@ -13,7 +13,7 @@ from training.trainer import train
 
 
 st.set_page_config(
-    page_title="Q-Learn Lab | Reinforcement Learning Tic-Tac-Toe",
+    page_title="Interactive Reinforcement Learning Laboratory 2.0",
     page_icon="Q",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -111,7 +111,7 @@ def render_header() -> None:
     status, detail = status_label()
     left, right = st.columns([4, 1])
     with left:
-        st.title("Interactive Reinforcement Learning Laboratory")
+        st.title("Interactive Reinforcement Learning Laboratory 2.0")
         st.markdown(
             '<div class="lab-subtitle">Watch an agent learn Tic-Tac-Toe from scratch through self-play.</div>',
             unsafe_allow_html=True,
